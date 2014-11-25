@@ -5,20 +5,21 @@ from bs4 import BeautifulSoup
 
 def get_login_info(filename):
     '''
-    This method is used to extract login info from the config (.ini) file in the same directory
-    as the script file. Stores this login info in a dictionary and returns it to be used to login
-    to the website.
+    This method is used to extract login info from the config (.ini) file in the
+    same directory as the script file. Stores this login info in a dictionary
+    and returns it to be used to login to the website.
 
     No error handling yet, needs to be done soon.
 
-    If config file is not located in the same directory as the script, please supply the full path
-    to the file.
+    If config file is not located in the same directory as the script, please
+    supply the full path to the file.
 
     Parameters:
-        filename = filename of config file (full path filename if not in same directory)
+        filename = filename of config file (full path filename)
 
     Return:
-        logins = dictionary containing login info (key: username, value: password)
+        logins = dictionary containing login info
+        (key: username, value: password)
     '''
     logins = {}
     config = configparser.ConfigParser()
@@ -29,11 +30,11 @@ def get_login_info(filename):
 
 def http_fetch():
     '''
-    This method is used to login to the whentowork website and get the HTML containing the current week
-    schedule.
+    This method is used to login to the whentowork website and get the HTML
+    containing the current week schedule.
     '''
     logins = get_login_info('login.ini')
-    # Get the correct login from the dictionary returned from get_login_info method.
+    # Get the correct login from the returned dictionary
     # Need to add handling for when only one login is present in config.
     crewLogin = ()
     usherLogin = ()
@@ -54,9 +55,10 @@ def http_fetch():
     r = s.post('http://whentowork.com/cgi-bin/w2w.dll/login', data=payload)
     index = r.url.index('=')
 
-    # The SID that is appended to the url of every page on whentowork is the last 13 characters in the url
-    # Since it is dynamically generated every login use this to get those last 13 characters.
-    # Can then apped this SID to the end of any W2W pages to get the HTML
+    # The SID that is appended to the url of every page on whentowork is the
+    # last 13 characters in the url.
+    # Since it is dynamically generated every login, use this to get those last
+    # 13 characters. Can then append this SID to the end of any W2W pages.
     sid = r.url[index+1:]
     r = s.get('https://www3.whentowork.com/cgi-bin/w2wC.dll/empschedule?SID={0}'.format(sid))
     parse_html(r.text)
@@ -72,11 +74,12 @@ def parse_html(html):
     # Schedule is in an html table tag with the class bd.
     # Actual shift information is within a script tag under that table tag
     table = soup.find("table", class_="bd").find_all("script")
-    # List of days of the week that can be used to filter out script tags that are not tags containing
-    # shift information
-    work_days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+    # List of days of the week that can be used to filter out script tags that
+    # do not contain shift information.
+    work_days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday",
+            "Friday", "Saturday"]
     shifts = []
-    # Loop through each tag and then through each day to find appropriate html with shifts
+    # Loop through each tag and then through each day to find appropriate html
     # Can probably be made more pythonic, but this works for now.
     for tag in table:
         for day in work_days:
