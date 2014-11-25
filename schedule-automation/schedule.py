@@ -1,5 +1,6 @@
 import requests
 import configparser
+import re
 from bs4 import BeautifulSoup
 
 def get_login_info(filename):
@@ -45,8 +46,8 @@ def http_fetch():
     # Set up the payload to pass to requests session
     payload = {"NAS_id": 76003,
             "name": "signin",
-            "UserId1": usherLogin[0] ,
-            "Password1": usherLogin[1],
+            "UserId1": crewLogin[0] ,
+            "Password1": crewLogin[1],
             "Submit1": "Please Wait..."
             }
     s = requests.Session()
@@ -67,9 +68,21 @@ def parse_html(html):
     Paramaters:
         html = string of HTML containing work schedule.
     '''
-    soup = BeautifulSoup(html)
-    print(soup.prettify())
-
+    soup = BeautifulSoup(html, 'html.parser')
+    # Schedule is in an html table tag with the class bd.
+    # Actual shift information is within a script tag under that table tag
+    table = soup.find("table", class_="bd").find_all("script")
+    # List of days of the week that can be used to filter out script tags that are not tags containing
+    # shift information
+    work_days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+    shifts = []
+    # Loop through each tag and then through each day to find appropriate html with shifts
+    # Can probably be made more pythonic, but this works for now.
+    for tag in table:
+        for day in work_days:
+            if day in tag.text:
+                shifts.append(tag.text)
+    print(shifts)
 
 if __name__ == '__main__':
     http_fetch()
