@@ -3,6 +3,12 @@ import configparser
 import re
 from bs4 import BeautifulSoup
 
+
+# global list of days of the week so it is available to all funcitons
+WORK_DAYS = [
+    "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"
+    ]
+
 def get_login_info(filename):
     '''
     This method is used to extract login info from the config (.ini) file in the
@@ -51,6 +57,9 @@ def http_fetch():
             "Password1": crewLogin[1],
             "Submit1": "Please Wait..."
             }
+
+    # Using a session so it can keep cookies to not have to log in again when
+    # navigating to a new page.
     s = requests.Session()
     r = s.post('http://whentowork.com/cgi-bin/w2w.dll/login', data=payload)
     index = r.url.index('=')
@@ -60,32 +69,46 @@ def http_fetch():
     # Since it is dynamically generated every login, use this to get those last
     # 13 characters. Can then append this SID to the end of any W2W pages.
     sid = r.url[index+1:]
-    r = s.get('https://www3.whentowork.com/cgi-bin/w2wC.dll/empschedule?SID={0}'.format(sid))
+    r = s.get('https://www3.whentowork.com/cgi-bin/w2wC.dll/empschedule?SID={0}'
+            .format(sid))
     parse_html(r.text)
 
 def parse_html(html):
     '''
-    Method to extract the scheduled work days from the HTML.
+    Method to get the HTML containing the currently scheduled work days.
 
-    Paramaters:
+    Parameters:
         html = string of HTML containing work schedule.
     '''
     soup = BeautifulSoup(html, 'html.parser')
     # Schedule is in an html table tag with the class bd.
     # Actual shift information is within a script tag under that table tag
     table = soup.find("table", class_="bd").find_all("script")
-    # List of days of the week that can be used to filter out script tags that
-    # do not contain shift information.
-    work_days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday",
-            "Friday", "Saturday"]
+
     shifts = []
     # Loop through each tag and then through each day to find appropriate html
     # Can probably be made more pythonic, but this works for now.
     for tag in table:
-        for day in work_days:
+        for day in WORK_DAYS:
             if day in tag.text:
                 shifts.append(tag.text)
-    print(shifts)
+    extract_shifts(shifts)
+
+def extract_shifts(shifts):
+    '''
+    Method to extract and return the exact day, time, and shift info from the
+    HTML containg the information.
+
+    Parameters:
+        shifts = list of HTML strings containing shift information
+        days = list of days of the week to create final dict
+    '''
+    working_shifts = {}
+    #for day in WORK_DAYS:
+    #    working_shifts[day] = []
+    #    for shift in shifts:
+    #        if day in shift:
+
 
 if __name__ == '__main__':
     http_fetch()
