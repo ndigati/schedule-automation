@@ -71,7 +71,7 @@ def http_fetch():
     sid = r.url[index+1:]
     r = s.get('https://www3.whentowork.com/cgi-bin/w2wC.dll/empschedule?SID={0}'
             .format(sid))
-    return r
+    return r.text
     #parse_html(r.text)
 
 def parse_html(html):
@@ -111,8 +111,9 @@ def extract_shifts(shifts):
         working_shifts[day] = []
         for shift in shifts:
             if day in shift:
-               shift_info = re.search(pattern, shift).group(0)
-               working_shifts[day].append(shift_info)
+               shift_info = re.search(pattern, shift)
+               if shift_info:
+                   working_shifts[day].append(shift_info).group(0)
     return working_shifts
 
 
