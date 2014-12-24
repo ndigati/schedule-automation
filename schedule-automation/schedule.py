@@ -92,7 +92,7 @@ def parse_html(html):
         for day in WORK_DAYS:
             if day in tag.text:
                 shifts.append(tag.text)
-    extract_shifts(shifts)
+    working_shifts = extract_shifts(shifts)
 
 def extract_shifts(shifts):
     '''
@@ -103,11 +103,15 @@ def extract_shifts(shifts):
         shifts = list of HTML strings containing shift information
         days = list of days of the week to create final dict
     '''
+    pattern = re.compile(r"\"[0-9]+[a|p]m(.)*\"")
     working_shifts = {}
-    #for day in WORK_DAYS:
-    #    working_shifts[day] = []
-    #    for shift in shifts:
-    #        if day in shift:
+    for day in WORK_DAYS:
+        working_shifts[day] = []
+        for shift in shifts:
+            if day in shift:
+               shift_info = re.search(pattern, shift).group(0)
+               working_shifts[day].append(shift_info)
+    return working_shifts
 
 
 if __name__ == '__main__':
