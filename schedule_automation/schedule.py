@@ -121,5 +121,5 @@ if __name__ == '__main__':
     schedule_html = http_fetch()
     shifts = parse_html(schedule_html)
     working_shifts = extract_shifts(shifts)
-    #print(working_shifts)
+    print(working_shifts)
     print(shifts)
