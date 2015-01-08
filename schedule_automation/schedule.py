@@ -58,8 +58,8 @@ def http_fetch():
     payload = {
         "NAS_id": 76003,
         "name": "signin",
-        "UserId1": crew_login[0],
-        "Password1": crew_login[1],
+        "UserId1": usher_login[0],
+        "Password1": usher_login[1],
         "Submit1": "Please Wait..."
     }
 
@@ -112,15 +112,15 @@ def extract_shifts(shifts):
         shifts = list of HTML strings containing shift information
         days = list of days of the week to create final dict
     """
-    pattern = re.compile(r"\"[0-9]+[a|p]m(.)*\"")
+    pattern = re.compile(r"\"[0-9]:?([0-9]+)?[a|p]m.+?\"")
     working_shifts = {}
     for day in WORK_DAYS:
         working_shifts[day] = []
         for shift in shifts:
             if day in shift:
-                shift_info = re.search(pattern, shift)
-                if shift_info:
-                    working_shifts[day].append(shift_info.group(0))
+                shift_info = re.finditer(pattern, shift)
+                for desc in shift_info:
+                    working_shifts[day].append(desc.group(0))
     return working_shifts
 
 
