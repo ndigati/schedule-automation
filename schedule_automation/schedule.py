@@ -21,6 +21,25 @@ class DBConnector(object):
         self.cursor = self.connection.cursor()
 
 
+class Search(object):
+    def __init__(self):
+        self.db = DBConnector()
+        self.shift = None
+        self.time = None
+        self.number = None
+        self.replyDate = None
+
+    def run(self):
+        self.search_db()
+        self.send_text()
+
+    def search_db(self):
+        pass
+
+    def send_text(self):
+        pass
+
+
 def get_login_info(filename):
     """
     This method is used to extract login info from the config (.ini) file in
