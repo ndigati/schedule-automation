@@ -42,8 +42,7 @@ def http_fetch():
     This method is used to login to the whentowork website and get the HTML
     containing the current week schedule.
     """
-    logins = get_login_info(
-        'C:/Users/Nick/PycharmProjects/schedule-automation/login.ini')
+    logins = get_login_info('login.ini')
     # Get the correct login from the returned dictionary
     # Need to add handling for when only one login is present in config.
     crew_login = ()
