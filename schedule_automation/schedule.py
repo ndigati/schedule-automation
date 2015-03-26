@@ -34,9 +34,14 @@ class Search(object):
         self.send_text()
 
     def search_db(self):
+        #TODO: Create database scheme
+        #TODO: Make this method query the database then look through
+        #TODO: results to see if a reply needs to be sent
         pass
 
     def send_text(self):
+        #TODO: Make this method send a text message to the supplied number
+        #TODO: if it finds a shift that needs to be sent
         pass
 
 
