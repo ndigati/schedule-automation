@@ -11,6 +11,7 @@ WORK_DAYS = [
     "Thursday", "Friday", "Saturday",
 ]
 
+
 class DBConnector(object):
     connection = None
     cursor = None
