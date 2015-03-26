@@ -1,6 +1,7 @@
 import requests
 import configparser
 import re
+import sqlite3
 from bs4 import BeautifulSoup
 
 
@@ -122,6 +123,14 @@ def extract_shifts(shifts):
                     working_shifts[day].append(desc.group(0))
     return working_shifts
 
+
+class DBConnector(object):
+    connection = None
+    cursor = None
+
+    def __init__(self):
+        self.connection = sqlite3.connect('shiftDB.db')
+        self.cursor = self.connection.cursor()
 
 if __name__ == '__main__':
     schedule_html = http_fetch()
