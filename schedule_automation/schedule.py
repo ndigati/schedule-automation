@@ -128,5 +128,7 @@ if __name__ == '__main__':
     schedule_html = http_fetch()
     shifts = parse_html(schedule_html)
     working_shifts = extract_shifts(shifts)
-    print(working_shifts)
-    print(shifts)
+    #print(working_shifts)
+    for day in working_shifts:
+        if working_shifts[day]:
+            print("{0} : {1}".format(day, working_shifts[day]))
