@@ -11,6 +11,14 @@ WORK_DAYS = [
     "Thursday", "Friday", "Saturday",
 ]
 
+class DBConnector(object):
+    connection = None
+    cursor = None
+
+    def __init__(self):
+        self.connection = sqlite3.connect('shiftDB.db')
+        self.cursor = self.connection.cursor()
+
 
 def get_login_info(filename):
     """
@@ -122,15 +130,6 @@ def extract_shifts(shifts):
                 for desc in shift_info:
                     working_shifts[day].append(desc.group(0))
     return working_shifts
-
-
-class DBConnector(object):
-    connection = None
-    cursor = None
-
-    def __init__(self):
-        self.connection = sqlite3.connect('shiftDB.db')
-        self.cursor = self.connection.cursor()
 
 if __name__ == '__main__':
     schedule_html = http_fetch()
