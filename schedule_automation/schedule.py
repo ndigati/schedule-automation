@@ -25,9 +25,9 @@ class Search(object):
     def __init__(self):
         self.db = DBConnector()
         self.shift = None
-        self.time = None
-        self.number = None
-        self.replyDate = None
+        self.currentTime = None
+        self.textNumber = None
+        self.replyDateTime = None
 
     def run(self):
         self.search_db()
