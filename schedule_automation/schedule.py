@@ -1,7 +1,6 @@
 import requests
 import configparser
 import re
-import sqlite3
 from bs4 import BeautifulSoup
 
 
@@ -10,39 +9,6 @@ WORK_DAYS = [
     "Sunday", "Monday", "Tuesday", "Wednesday",
     "Thursday", "Friday", "Saturday",
 ]
-
-
-class DBConnector(object):
-    connection = None
-    cursor = None
-
-    def __init__(self):
-        self.connection = sqlite3.connect('shiftDB.db')
-        self.cursor = self.connection.cursor()
-
-
-class Search(object):
-    def __init__(self):
-        self.db = DBConnector()
-        self.shift = None
-        self.currentTime = None
-        self.textNumber = None
-        self.replyDateTime = None
-
-    def run(self):
-        self.search_db()
-        self.send_text()
-
-    def search_db(self):
-        #TODO: Create database scheme
-        #TODO: Make this method query the database then look through
-        #TODO: results to see if a reply needs to be sent
-        pass
-
-    def send_text(self):
-        #TODO: Make this method send a text message to the supplied number
-        #TODO: if it finds a shift that needs to be sent
-        pass
 
 
 def get_login_info(filename):
@@ -66,7 +32,8 @@ def get_login_info(filename):
     logins = {}
     config = configparser.ConfigParser()
     config.read(filename)
-    logins[config['USHER_LOGIN']['username']] = config['USHER_LOGIN']['password']
+    logins[config['USHER_LOGIN']['username']] = config['USHER_LOGIN'][
+        'password']
     logins[config['CREW_LOGIN']['username']] = config['CREW_LOGIN']['password']
     return logins
 
